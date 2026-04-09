@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-teal-600 mb-4">Profile</h2>
+    <div class="flex items-center space-x-4 mb-4">
+        <div class="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center text-xl text-gray-700">
+            {{ user.username[0] | upper }}
+        </div>
+        <div>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Full Name:</strong> {{ user.name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Age:</strong> {{ user.age }}</p>
+            <p><strong>Gender:</strong> {{ user.gender }}</p>
+        </div>
+    </div>
+    <div class="mt-4">
+        <h3 class="text-xl font-bold text-teal-600 mb-2">Prediction Summary</h3>
+        <p>Total Predictions: {{ predictions|length }}</p>
+        <p>Positive Predictions: {{ positive_count }}</p>
+        <p>Negative Predictions: {{ negative_count }}</p>
+        <!-- Bar Chart for Positive vs. Negative Predictions -->
+        <div class="relative w-48 h-48 mx-auto my-4">
+            <canvas id="predictionBarChart"></canvas>
+        </div>
+        <!-- Line Chart for Prediction Trend Over Time -->
+        <div class="relative w-64 h-64 mx-auto my-4">
+            <canvas id="predictionTrendChart"></canvas>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Bar Chart for Positive vs. Negative Predictions
+    const barCtx = document.getElementById('predictionBarChart').getContext('2d');
+    new Chart(barCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Negative', 'Positive'],
+            datasets: [{
+                label: 'Prediction Counts',
+                data: [{{ negative_count }}, {{ positive_count }}],
+                backgroundColor: ['#10B981', '#EF4444'],
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true } }
+        }
+    });
+
+    // Line Chart for Prediction Trend Over Time
+    const lineCtx = document.getElementById('predictionTrendChart').getContext('2d');
+    new Chart(lineCtx, {
+        type: 'line',
+        data: {
+            labels: [{% for date in dates %}'{{ date }}'{% if not loop.last %},{% endif %}{% endfor %}],
+            datasets: [{
+                label: 'Prediction Result (1 = Positive, 0 = Negative)',
+                data: [{% for result in results %}{{ result }}{% if not loop.last %},{% endif %}{% endfor %}],
+                borderColor: '#EF4444',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, max: 1, ticks: { stepSize: 1 } } },
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+</script>
+{% endblock %}

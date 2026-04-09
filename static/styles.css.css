@@ -1,0 +1,36 @@
+body {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+.font-roboto {
+    font-family: 'Roboto', sans-serif;
+}
+.bg-red-700 {
+    background-color: #B91C1C;
+}
+.text-red-700 {
+    color: #B91C1C;
+}
+.bg-red-100 {
+    background-color: #FEE2E2;
+}
+.hover\:bg-red-800:hover {
+    background-color: #991B1B;
+}
+.animate-fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+.animate-slide-up {
+    animation: slideUp 0.5s ease-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+input:focus, select:focus {
+    border-color: #B91C1C !important;
+}

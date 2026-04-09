@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-teal-600 mb-4">Home</h2>
+    <div class="bg-gray-700 text-white p-8 mb-4 text-center min-h-40">
+        <p class="text-2xl font-bold">Welcome, {{ user.username }}!</p>
+        <p class="text-lg">Monitor your heart health with advanced predictions and insights.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-teal-600 mb-2">Prediction History</h3>
+            {% if predictions %}
+            <canvas id="predictionChart" class="w-full h-64"></canvas>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                const ctx = document.getElementById('predictionChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Positive', 'Negative'],
+                        datasets: [{
+                            label: 'Predictions',
+                            data: [{{ positive_count }}, {{ negative_count }}],
+                            backgroundColor: ['#EF4444', '#10B981']
+                        }]
+                    },
+                    options: { scales: { y: { beginAtZero: true } } }
+                });
+            </script>
+            {% else %}
+            <p class="text-gray-600">No predictions yet.</p>
+            {% endif %}
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-teal-600 mb-2">Health Tip of the Day</h3>
+            <p class="text-gray-600">Exercise for 30 minutes daily to improve heart health!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

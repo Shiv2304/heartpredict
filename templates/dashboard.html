@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="bg-white p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-teal-600 mb-4">Dashboard</h2>
+    <p class="text-xl font-bold text-gray-800 mb-4">Welcome, {{ user.username|upper }}! Today is {{ datetime.now().strftime('%B %d, %Y') }}. Monitor your heart health with advanced predictions.</p>
+    <div class="mb-4 text-center">
+        <a href="{{ url_for('home') }}" class="bg-teal-600 text-white p-2 rounded hover:bg-teal-700 transition-colors duration-300">Home</a>
+    </div>
+    <div class="mt-4 space-x-4 text-center">
+        <a href="{{ url_for('predict') }}" class="bg-teal-600 text-white p-2 rounded hover:bg-teal-700 transition-colors duration-300">Make a Prediction</a>
+        <a href="{{ url_for('profile') }}" class="bg-gray-200 text-gray-800 p-2 rounded hover:bg-gray-300 transition-colors duration-300">View Profile</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-teal-600 mb-2">Prediction History</h3>
+            {% if predictions %}
+            <div class="relative w-48 h-48 mx-auto my-4">
+                <canvas id="predictionDoughnutChart"></canvas>
+            </div>
+            <ul class="list-disc pl-5 text-gray-600">
+                {% for pred in predictions[:5] %}
+                <li>{{ pred.date.strftime('%Y-%m-%d %H:%M') }} - {{ pred.result }}</li>
+                {% endfor %}
+            </ul>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+                const doughnutCtx = document.getElementById('predictionDoughnutChart').getContext('2d');
+                new Chart(doughnutCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Negative', 'Positive'],
+                        datasets: [{
+                            data: [{{ negative_count }}, {{ positive_count }}],
+                            backgroundColor: ['#10B981', '#EF4444'],
+                            borderWidth: 1,
+                            borderColor: '#fff'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' },
+                            tooltip: { enabled: true }
+                        }
+                    }
+                });
+            </script>
+            {% else %}
+            <p class="text-gray-600">No predictions yet.</p>
+            {% endif %}
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h3 class="text-xl font-bold text-teal-600 mb-2">Health Tip of the Day</h3>
+            <p class="text-gray-600">Exercise for 30 minutes daily to improve heart health!</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
